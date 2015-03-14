@@ -1,0 +1,26 @@
+{
+  "name": "string-calculator-kata",
+  "version": "1.0.0",
+  "description": "http://nimblepros.com/media/36628/string%20calculator%20kata.pdf",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha test/",
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m4w4q7/string-calculator-kata.git"
+  },
+  "author": "m4w4q7",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^2.2.1",
+    "supertest": "^0.15.0"
+  },
+  "dependencies": {
+    "express": "^4.12.2"
+  }
+}
