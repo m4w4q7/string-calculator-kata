@@ -17,6 +17,7 @@
   "author": "m4w4q7",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^2.1.1",
     "mocha": "^2.2.1",
     "supertest": "^0.15.0"
   },
