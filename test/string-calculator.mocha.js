@@ -20,8 +20,12 @@ describe("string-calculator", function() {
             expect( stringCalculator.add("-4,-1") ).to.eql(-5);
         });
         
-        it("should accept not just commas as separators, but also new line characters", function() {
+        it("should accept not just commas as delimiters, but also new line characters", function() {
             expect( stringCalculator.add("1\n2,3") ).to.eql(6);
+        });
+        
+        it("should use another delimiter if it's specified in the first line (e.g. '//;' for ';' as delimiter)", function() {
+           expect( stringCalculator.add("//;\n1;2") ).to.eql(3);
         });
         
     })
