@@ -20,5 +20,9 @@ describe("string-calculator", function() {
             expect( stringCalculator.add("-4,-1") ).to.eql(-5);
         });
         
+        it("should accept not just commas as separators, but also new line characters", function() {
+            expect( stringCalculator.add("1\n2,3") ).to.eql(6);
+        });
+        
     })
 });
