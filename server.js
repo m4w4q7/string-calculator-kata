@@ -7,7 +7,13 @@ module.exports = {
         app
             .get("/string-calculator", function(req, res) {
                 if ("add" in req.query) {
-                    res.send(stringCalculator.add(req.query.add).toString());
+                    var response;
+                    try {
+                        response = stringCalculator.add(req.query.add).toString();
+                    } catch(e) {
+                        response = e.message;
+                    }
+                    res.send(response);
                 } else {
                     res.sendStatus(200);
                 }
