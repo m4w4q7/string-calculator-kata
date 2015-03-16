@@ -1,5 +1,6 @@
 var supertest = require("supertest");
 var server = require("../server.js");
+var stringCalculator = require("../string-calculator.js");
 
 describe("server.js", function() {
     
@@ -12,6 +13,12 @@ describe("server.js", function() {
             supertest(server.getExpressServer())
                 .get("/string-calculator")
                 .expect(200);
+        });
+        
+        it("should respond the result of string-calculator#add(s), if the \"add\" key is present in the query string and s is the value for it", function() {
+            supertest(server.getExpressServer())
+                .get("/string-calculator?add=1,2")
+                .expect(200, stringCalculator.add("1,2")); // ignoring the logic of #add
         });
     });
 });

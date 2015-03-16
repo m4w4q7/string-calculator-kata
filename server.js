@@ -1,17 +1,25 @@
-var express = require("express")();
+var app = require("express")();
+var stringCalculator = require("./string-calculator.js");
 
 module.exports = {
+    
     configure: function() {
-        express
+        app
             .get("/string-calculator", function(req, res) {
-                res.sendStatus(200);
+                if ("add" in req.query) {
+                    res.send(stringCalculator.add(req.query.add).toString());
+                } else {
+                    res.sendStatus(200);
+                }
             });
         return this;
     },
+    
     start: function() {
-        express.listen(process.env.PORT);
+        app.listen(process.env.PORT);
     },
+    
     getExpressServer: function() {
-        return express;
+        return app;
     }
 }
