@@ -1,14 +1,24 @@
 module.exports = (function() {
 	
+	var _limit = 1000;
+	
 	var _getDelimiter = function(calculatorInputString) {
 		var delimiterRegExp = /^\/\/(.)\n/;
 		return delimiterRegExp.test(calculatorInputString) ? delimiterRegExp.exec(calculatorInputString)[1] : /[,\n]/;
-	}
+	};
 	
 	var _getNumberSequence = function(calculatorInputString) {
 		var numberSequenceRegExp = /^(?:\/\/.\n)?((?:.|[\n\r])*)$/;
 		return numberSequenceRegExp.exec(calculatorInputString)[1];
 	};
+	
+	var _removeNumbersBeyondTheLimit = function(numbers) {
+		return numbers.filter(function(number) {return number <= _limit});
+	};
+	
+	var sum = function(numbers) {
+		return numbers.reduce( function(e1, e2) {return e1 + e2}, 0 );
+	}
 	
 	var add = function(calculatorInputString) {
 		
@@ -23,9 +33,7 @@ module.exports = (function() {
 		
 		if (negativeNumbers.length) throw new RangeError("Negatives not allowed: " + negativeNumbers.join());
 		
-		var sum = numbers.reduce( function(e1, e2) {return e1 + e2}, 0 );
-		
-		return sum;
+		return sum(_removeNumbersBeyondTheLimit(numbers));
 	};
 	
 	return {

@@ -32,5 +32,9 @@ describe("string-calculator", function() {
 			expect( stringCalculator.add.bind(stringCalculator, "2,-4,3,-5") )
 				.to.throw("Negatives not allowed: -4,-5");
 		});
+		
+		it("should ignore numbers greater than 1000", function() {
+			expect( stringCalculator.add("1001,2") ).to.eql(2);
+		});
 	})
 });
