@@ -1,15 +1,22 @@
 var _limit = 1000;
 
+function _getDelimiter(delimiterSequence) {
+	if (!delimiterSequence) return /[,\n]/;
+	var longDelimiterRegExp  = /(?:\[(.*)\])?/;
+	var longDelimiter = longDelimiterRegExp.exec(delimiterSequence)[1];
+	return longDelimiter === undefined ? delimiterSequence : longDelimiter;
+}
+
 module.exports.add = function(calculatorInputString) {
 		
-	var delimiterRegExp = /^(?:\/\/(.)\n)?/g;
+	var delimiterSequenceRegExp = /^(?:\/\/(.+)\n)?/g;
 	
-	var delimiterSequence = delimiterRegExp.exec(calculatorInputString)[1];
-	var numberSequence = calculatorInputString.substr(delimiterRegExp.lastIndex);
+	var delimiterSequence = delimiterSequenceRegExp.exec(calculatorInputString)[1];
+	var numberSequence = calculatorInputString.substr(delimiterSequenceRegExp.lastIndex);
 	
 	if (numberSequence === "") return 0;
 	
-	var delimiter = delimiterSequence || /[,\n]/;
+	var delimiter = _getDelimiter(delimiterSequence);
 	var numbers = numberSequence.split(delimiter).map( function(s) {return parseInt(s, 10)} );
 	
 	var negativeNumbers = numbers.filter( function(number) {return number < 0} );

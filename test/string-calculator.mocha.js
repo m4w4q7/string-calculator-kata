@@ -36,5 +36,9 @@ describe("string-calculator", function() {
 		it("should ignore numbers greater than 1000", function() {
 			expect( stringCalculator.add("1001,2") ).to.eql(2);
 		});
+		
+		it("should accept delimiter of any length, using a special syntax (i.e. '//[***]' for '***' as delimiter)", function() {
+			expect( stringCalculator.add("//[***]\n1***2***3") ).to.eql(6);
+		});
 	})
 });
