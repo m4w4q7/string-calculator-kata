@@ -48,5 +48,10 @@ describe("string-calculator", function() {
 		it("should handle multiple delimiters of any length", function() {
 			expect( stringCalculator.add("//[***][%][/]\n1/2%3***4") ).to.eql(10);
 		});
+		
+		it("should handle delimiters that are part of another delimiter", function() {
+			expect( stringCalculator.add("//[\\m/][m]\n1\\m/2\\m/3m4") ).to.eql(10);
+			expect( stringCalculator.add("//[m][\\m/]\n1\\m/2\\m/3m4") ).to.eql(10);
+		});
 	});
 });

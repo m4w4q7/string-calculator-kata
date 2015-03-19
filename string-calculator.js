@@ -1,28 +1,46 @@
 var _limit = 1000;
 
 
+var _DelimiterSplitter = (function() {
+	
+	var DelimiterSplitter = function(delimiterSequence) {
+		this._delimiterSplitterRegExp = /(?:\[([^\[\]]*)\])?/g;
+		this._delimiterSequence = delimiterSequence;
+	};
+	
+	DelimiterSplitter.prototype.nextDelimiterFromBracket = function() {
+		return this._delimiterSplitterRegExp.exec(this._delimiterSequence)[1];
+	};
+	
+	return DelimiterSplitter;
+})();
+
+
 function _getDelimiters(delimiterSequence) {
 	
 	if (!delimiterSequence) return [/[,\n]/];
 	
 	var delimitersFromBrackets = [];
-	var delimiterSplitterRegExp  = /(?:\[([^\[\]\n]*)\])?/g;
-	var delimiter = delimiterSplitterRegExp.exec(delimiterSequence)[1];
+	var delimiterSplitter = new _DelimiterSplitter(delimiterSequence);
+	
+	var delimiter = delimiterSplitter.nextDelimiterFromBracket();
 	while (delimiter !== undefined) {
 		delimitersFromBrackets.push(delimiter);
-		delimiter = delimiterSplitterRegExp.exec(delimiterSequence)[1];
+		delimiter = delimiterSplitter.nextDelimiterFromBracket();
 	}
-	
+		
 	return delimitersFromBrackets.length ? delimitersFromBrackets : [delimiterSequence];
 }
 
 
 function _getNumbers(numberSequence, delimiters) {
 	
+	var delimitersOrderedByDescendingLength = delimiters.sort(function(e1, e2) {return e2.length - e1.length});
+	
 	var numbersAsStrings = [numberSequence];
-	for (var i = 0; i < delimiters.length; i++) {
-		numbersAsStrings = _refineSplit(numbersAsStrings, delimiters[i]);
-	}
+	delimitersOrderedByDescendingLength.forEach(function(delimiter) {
+		numbersAsStrings = _refineSplit(numbersAsStrings, delimiter);
+	});
 	
 	var numbers = numbersAsStrings.map( function(s) {return parseInt(s, 10)} );
 	return numbers;
@@ -32,18 +50,16 @@ function _getNumbers(numberSequence, delimiters) {
 function _refineSplit(stringArray, delimiter) {
 	
 	var refinedStringArray = [];
-	
-	for (var i = 0; i < stringArray.length; i++) {
-		_extendArray(refinedStringArray, stringArray[i].split(delimiter));
-	}
+	stringArray.forEach(function(s) {_extendArray(refinedStringArray, s.split(delimiter))});
 	
 	return refinedStringArray;
 }
 
 
 function _extendArray(array1, array2) {
-	Array.prototype.push.apply(array1, array2);
+	array1.push.apply(array1, array2);
 }
+
 
 
 module.exports.add = function(calculatorInputString) {
