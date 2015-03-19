@@ -37,8 +37,12 @@ describe("string-calculator", function() {
 			expect( stringCalculator.add("1001,2") ).to.eql(2);
 		});
 		
-		it("should accept delimiter of any length, using a special syntax (i.e. '//[***]' for '***' as delimiter)", function() {
+		it("should accept a delimiter of any length if it's wrapped in brackets)", function() {
 			expect( stringCalculator.add("//[***]\n1***2***3") ).to.eql(6);
 		});
-	})
+		
+		it("should accept multiple delimiters if they are wrapped in brackets)", function() {
+			expect( stringCalculator.add("//[*][%]\n1*2%3") ).to.eql(6);
+		});
+	});
 });
