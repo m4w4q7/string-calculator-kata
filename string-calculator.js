@@ -1,7 +1,8 @@
-var _limit = 1000;
+var LIMIT = 1000;
 
 
-var _DelimiterSplitter = (function() {
+
+var DelimiterSplitter = (function() {	
 	
 	var DelimiterSplitter = function(delimiterSequence) {
 		this._delimiterSplitterRegExp = /(?:\[([^\[\]]*)\])?/g;
@@ -16,12 +17,47 @@ var _DelimiterSplitter = (function() {
 })();
 
 
-function _getDelimiters(delimiterSequence) {
+var StringSplitter = (function() {
+	
+	var StringSplitter = function(inputString, delimiters) {
+		this.stringArray = [inputString];
+		if (delimiters) this.split(delimiters);
+	};
+	
+	StringSplitter.prototype.split = function(delimiters) {
+		var delimitersOrderedByDescendingLength = orderDelimitersByDescendingLength(delimiters);
+		delimitersOrderedByDescendingLength.forEach(this._refineSplit.bind(this));
+	};
+	
+	StringSplitter.prototype.getSplittedStrings = function() {
+		return this.stringArray.slice();
+	};
+	
+	StringSplitter.prototype._refineSplit = function(delimiter) {
+		var refinedStringArray = [];
+		this.stringArray.forEach(function(s) {extendArray(refinedStringArray, s.split(delimiter))});
+		this.stringArray = refinedStringArray;
+	};
+	
+	function orderDelimitersByDescendingLength(delimiters) {
+		return delimiters.sort(function(e1, e2) {return e2.length - e1.length});
+	}
+	
+	function extendArray(array1, array2) {
+		array1.push.apply(array1, array2);
+	}
+	
+	return StringSplitter;
+})();
+
+
+
+function getDelimiters(delimiterSequence) {
 	
 	if (!delimiterSequence) return [/[,\n]/];
 	
 	var delimitersFromBrackets = [];
-	var delimiterSplitter = new _DelimiterSplitter(delimiterSequence);
+	var delimiterSplitter = new DelimiterSplitter(delimiterSequence);
 	
 	var delimiter = delimiterSplitter.nextDelimiterFromBracket();
 	while (delimiter !== undefined) {
@@ -33,31 +69,12 @@ function _getDelimiters(delimiterSequence) {
 }
 
 
-function _getNumbers(numberSequence, delimiters) {
+function getNumbers(numberSequence, delimiters) {
 	
-	var delimitersOrderedByDescendingLength = delimiters.sort(function(e1, e2) {return e2.length - e1.length});
+	var numberSequenceSplitter = new StringSplitter(numberSequence, delimiters);
+	var numbers = numberSequenceSplitter.getSplittedStrings().map( function(s) {return parseInt(s, 10)} );
 	
-	var numbersAsStrings = [numberSequence];
-	delimitersOrderedByDescendingLength.forEach(function(delimiter) {
-		numbersAsStrings = _refineSplit(numbersAsStrings, delimiter);
-	});
-	
-	var numbers = numbersAsStrings.map( function(s) {return parseInt(s, 10)} );
 	return numbers;
-}
-
-
-function _refineSplit(stringArray, delimiter) {
-	
-	var refinedStringArray = [];
-	stringArray.forEach(function(s) {_extendArray(refinedStringArray, s.split(delimiter))});
-	
-	return refinedStringArray;
-}
-
-
-function _extendArray(array1, array2) {
-	array1.push.apply(array1, array2);
 }
 
 
@@ -71,13 +88,13 @@ module.exports.add = function(calculatorInputString) {
 	
 	if (numberSequence === "") return 0;
 	
-	var delimiters = _getDelimiters(delimiterSequence);
-	var numbers = _getNumbers(numberSequence, delimiters);
+	var delimiters = getDelimiters(delimiterSequence);
+	var numbers = getNumbers(numberSequence, delimiters);
 	
 	var negativeNumbers = numbers.filter( function(number) {return number < 0} );
 	if (negativeNumbers.length) throw new RangeError("Negatives not allowed: " + negativeNumbers.join());
 	
-	var numbersBeyondTheLimit = numbers.filter(function(number) {return number <= _limit});
-	var sum = numbersBeyondTheLimit.reduce( function(e1, e2) {return e1 + e2}, 0 );
+	var numbersBelowTheLimit = numbers.filter( function(number) {return number <= LIMIT} );
+	var sum = numbersBelowTheLimit.reduce( function(e1, e2) {return e1 + e2}, 0 );
 	return sum;
 };
